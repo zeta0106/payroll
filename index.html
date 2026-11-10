@@ -1249,6 +1249,15 @@
           min-width: 0;
         }
       }
+      .reset-clock {
+        width: 100%;
+        min-height: 50px;
+        margin-top: 20px;
+        color: #a13d34;
+        background: #fff7f5;
+        border-color: #edd4ce;
+        font-size: 17px;
+      }
     </style>
   </head>
   <body>
@@ -1408,7 +1417,7 @@
           customExpenses: [],
         };
         for (const [dt, d] of Object.entries(source.days || {})) {
-          if (d.clock?.start || d.clock?.end)
+          if (d.clock?.start || d.clock?.end || d.clock?.rate !== undefined)
             result.days[dt] = { sales: {}, items: [], clock: { ...d.clock } };
         }
         return result;
@@ -1486,7 +1495,7 @@
       function clockCard() {
         let d = day(),
           c = d.clock;
-        return `<section class="card"><div class="panel-head"><div class="panel-title">${icon("clock")}<h2>返工打卡</h2></div><button class="link" onclick="clockModal()">手動修改 ↗</button></div><div class="clock-content"><div class="time-row"><div class="time-cell"><small>上班時間</small><b>${c.start || "--:--"}</b></div><div class="time-cell"><small>下班時間</small><b>${c.end || "--:--"}</b></div></div><button class="primary wide" onclick="punch()">${icon(c.end ? "check" : "clock")}${c.end ? "已完成打卡・查看記錄" : c.start ? "收工了，下班打卡" : "開始工作，上班打卡"}</button><div class="clock-bottom"><span>工時 <b>${hours(d).toFixed(2)}</b> 小時</span><span>工資 <b>$${money(wage(d))}</b></span></div></div></section>`;
+        return `<section class="card"><div class="panel-head"><div class="panel-title">${icon("clock")}<h2>返工打卡</h2></div><button class="link" onclick="clockModal()">手動修改 ↗</button></div><div class="clock-content"><div class="time-row"><div class="time-cell"><small>上班時間</small><b>${c.start || "--:--"}</b></div><div class="time-cell"><small>下班時間</small><b>${c.end || "--:--"}</b></div></div><button class="primary wide" onclick="punch()">${icon(c.end ? "check" : "clock")}${c.end ? "已完成打卡・查看記錄" : c.start ? "收工了，下班打卡" : "開始工作，上班打卡"}</button><div class="clock-bottom"><span>工時 <b>${hours(d).toFixed(2)}</b> 小時</span><span>工資 <b>$${money(wage(d))}</b></span></div>${c.start || c.end ? `<button type="button" class="secondary reset-clock" onclick="resetClock()">重設當日打卡</button>` : ""}</div></section>`;
       }
       function render() {
         document.getElementById("nav").innerHTML = [
@@ -1550,6 +1559,23 @@
           }
         }
       });
+      // 只清除目前所選日期的打卡時間；保留當日時薪及其他日期資料。
+      function resetClock() {
+        const selectedDate = date;
+        const record = day(selectedDate);
+        if (!record.clock.start && !record.clock.end) return;
+        if (
+          !confirm(
+            `確定重設 ${selectedDate} 的打卡記錄？\n\n上班及下班時間會被清除，當日工時及工資會歸零，每月總數亦會更新。其他日期及時薪設定不受影響。\n\n清除後無法復原。`,
+          )
+        )
+          return;
+        const rate = record.clock.rate;
+        record.clock = rate === undefined ? {} : { rate };
+        const saved = save();
+        render();
+        if (saved) toast("已重設所選日期，可以重新打卡");
+      }
       function punch() {
         if (day().clock.end || date !== hkDate()) {
           clockModal();
@@ -1564,7 +1590,7 @@
         let c = day().clock;
         if (!c.start) {
           c.start = t;
-          c.rate = db.rate;
+          c.rate = c.rate ?? db.rate;
         } else c.end = t;
         save();
         render();
