@@ -1,0 +1,1932 @@
+<!doctype html>
+<html lang="zh-HK">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>P.W · 打卡與工資</title>
+    <style>
+      :root {
+        --bg: #f6f7f9;
+        --ink: #182d2a;
+        --muted: #6f7a78;
+        --green: #14715a;
+        --mint: #eaf4ef;
+        --line: #e7ebe8;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Noto Sans TC", "PingFang HK",
+          "Microsoft JhengHei", sans-serif;
+        color: var(--ink);
+        font-size: 18px;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      button:focus-visible,
+      a:focus-visible {
+        outline: 3px solid #e0ad47;
+        outline-offset: 3px;
+      }
+      button {
+        border: 0;
+        background: none;
+        color: inherit;
+      }
+      svg {
+        width: 23px;
+        height: 23px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex-shrink: 0;
+      }
+      .sidebar {
+        width: 246px;
+        position: fixed;
+        inset: 0 auto 0 0;
+        background: white;
+        border-right: 1px solid var(--line);
+        padding: 38px 22px;
+        display: flex;
+        flex-direction: column;
+        z-index: 20;
+      }
+      .brand {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin: 0 8px 47px;
+      }
+      .brand-icon {
+        width: 47px;
+        height: 47px;
+        background: var(--green);
+        border-radius: 15px;
+        display: grid;
+        place-items: center;
+        color: white;
+      }
+      .brand-icon svg {
+        width: 31px;
+        height: 31px;
+      }
+      .brand b {
+        font-size: 23px;
+        letter-spacing: 2px;
+      }
+      .brand small {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 5px;
+        letter-spacing: 2px;
+      }
+      .nav-label {
+        font-size: 12px;
+        letter-spacing: 2px;
+        color: #919a96;
+        padding: 0 18px;
+        margin-bottom: 13px;
+      }
+      .nav-item {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        padding: 17px 19px;
+        border-radius: 13px;
+        text-align: left;
+        width: 100%;
+        margin-bottom: 9px;
+        color: #65716e;
+        font-size: 18px;
+        font-weight: 550;
+      }
+      .nav-item.active {
+        background: var(--mint);
+        color: var(--green);
+      }
+      .side-bottom {
+        margin-top: auto;
+      }
+      .local-note {
+        padding: 19px 14px;
+        border-top: 1px solid var(--line);
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+      .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #3c9673;
+        display: inline-block;
+        margin-right: 8px;
+      }
+      main {
+        margin-left: 246px;
+        padding: 0 46px 40px;
+        max-width: 1670px;
+      }
+      .topbar {
+        height: 91px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 33px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .topbrand {
+        display: flex;
+        gap: 9px;
+        align-items: center;
+      }
+      .topright {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+      }
+      .avatar {
+        background: #e6eee9;
+        border-radius: 50%;
+        height: 38px;
+        width: 38px;
+        display: grid;
+        place-items: center;
+        color: var(--green);
+        font-weight: bold;
+      }
+      .heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+        gap: 20px;
+      }
+      h1 {
+        font-size: 30px;
+        letter-spacing: 1px;
+        margin: 0 0 8px;
+        font-weight: 650;
+      }
+      h2 {
+        font-size: 20px;
+        margin: 0;
+      }
+      p {
+        color: var(--muted);
+        font-size: 15px;
+        margin: 0;
+        line-height: 1.7;
+      }
+      .datebox {
+        display: flex;
+        align-items: center;
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        gap: 7px;
+        padding: 6px;
+      }
+      .datebox input {
+        border: 0;
+        width: 158px;
+        background: transparent;
+        padding: 8px;
+        color: var(--ink);
+        font-size: 16px;
+      }
+      .datebox button {
+        min-width: 36px;
+        height: 38px;
+        color: var(--muted);
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 26px;
+      }
+      .card {
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: 0 3px 6px #162d2302;
+        overflow: hidden;
+      }
+      .stat {
+        padding: 23px 25px;
+      }
+      .stat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 16px;
+        color: #63716c;
+      }
+      .stat-top svg {
+        width: 21px;
+      }
+      .stat-value {
+        font-size: 35px;
+        font-weight: 650;
+        letter-spacing: -1px;
+        margin: 17px 0 9px;
+        font-variant-numeric: tabular-nums;
+      }
+      .currency {
+        font-size: 18px;
+        letter-spacing: 0;
+        font-weight: 500;
+        margin-right: 7px;
+        color: #78857f;
+      }
+      .stat-foot {
+        font-size: 13px;
+        color: #81908a;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .featured {
+        background: #156c56;
+        color: white;
+        border-color: #156c56;
+        position: relative;
+      }
+      .featured .stat-top,
+      .featured .currency,
+      .featured .stat-foot {
+        color: #c9e0d6;
+      }
+      .featured:after {
+        content: "";
+        position: absolute;
+        width: 160px;
+        height: 160px;
+        border: 1px solid #ffffff10;
+        border-radius: 50%;
+        right: -55px;
+        bottom: -70px;
+        box-shadow:
+          0 0 0 26px #ffffff04,
+          0 0 0 53px #ffffff03;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(310px, 1fr);
+        gap: 24px;
+        align-items: start;
+      }
+      .panel-head {
+        padding: 23px 25px 19px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .panel-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .panel-title svg {
+        color: var(--green);
+      }
+      .badge {
+        background: #f1f5f2;
+        color: #6a8074;
+        font-size: 12px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        white-space: nowrap;
+      }
+      .payments {
+        padding: 0 25px;
+      }
+      .payment {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 13px 0;
+        border-bottom: 1px solid #f0f2f0;
+      }
+      .payment:last-child {
+        border-bottom: 0;
+      }
+      .code {
+        width: 37px;
+        height: 37px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        font-weight: 650;
+        font-size: 16px;
+        background: #eaf4ef;
+        color: #39826b;
+      }
+      .code.o {
+        background: #fff0de;
+        color: #bf7c2f;
+      }
+      .code.a {
+        background: #eaf5fc;
+        color: #4087b4;
+      }
+      .code.v {
+        background: #eeeffb;
+        color: #5b65a1;
+      }
+      .code.m {
+        background: #fceee9;
+        color: #b67656;
+      }
+      .code.w {
+        background: #edf7e9;
+        color: #63934e;
+      }
+      .pay-name {
+        font-size: 17px;
+        flex: 1;
+      }
+      .pay-name small {
+        font-size: 12px;
+        color: #9aa49f;
+        margin-left: 9px;
+      }
+      .amount {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid #e4e9e5;
+        border-radius: 9px;
+        width: 170px;
+        padding: 0 12px;
+        background: #fafbf9;
+        color: #9ba59f;
+        font-size: 13px;
+      }
+      .amount input {
+        border: 0;
+        background: none;
+        text-align: right;
+        width: 100%;
+        min-width: 0;
+        padding: 11px 0;
+        font-size: 19px;
+        font-weight: 550;
+        color: var(--ink);
+        outline: none;
+      }
+      .amount:focus-within {
+        border-color: var(--green);
+        box-shadow: 0 0 0 2px #14715a12;
+      }
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      .pay-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 7px 25px 0;
+        padding: 20px 0;
+        border-top: 1px solid var(--line);
+        font-size: 16px;
+      }
+      .pay-total strong {
+        font-size: 23px;
+      }
+      .card-footer {
+        background: #fafcfb;
+        border-top: 1px solid var(--line);
+        padding: 15px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        color: #829087;
+      }
+      .link {
+        color: var(--green);
+        font-size: 14px;
+        font-weight: 600;
+        min-height: 40px;
+      }
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+      .quick-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 13px;
+        padding: 0 23px 23px;
+      }
+      .quick {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 19px 8px 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        font-size: 16px;
+        font-weight: 550;
+        transition: 0.15s;
+      }
+      .quick:hover {
+        background: #f6faf7;
+        transform: translateY(-2px);
+      }
+      .quick-icon {
+        height: 42px;
+        width: 42px;
+        border-radius: 13px;
+        background: #f2f5ef;
+        color: #63806a;
+        display: grid;
+        place-items: center;
+      }
+      .quick-icon.orange {
+        background: #fcf2e6;
+        color: #b88a50;
+      }
+      .quick small {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 400;
+      }
+      .clock-content {
+        padding: 0 25px 23px;
+      }
+      .time-row {
+        display: flex;
+        gap: 15px;
+        justify-content: space-between;
+        margin: 8px 0 22px;
+      }
+      .time-cell {
+        flex: 1;
+      }
+      .time-cell:first-child {
+        border-right: 1px solid var(--line);
+      }
+      .time-cell small {
+        display: block;
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 9px;
+      }
+      .time-cell b {
+        font-size: 27px;
+        font-weight: 550;
+      }
+      .primary {
+        border: 0;
+        border-radius: 10px;
+        background: var(--green);
+        color: white;
+        padding: 14px 22px;
+        min-height: 49px;
+        font-size: 17px;
+        font-weight: 550;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 9px;
+      }
+      .primary.wide {
+        width: 100%;
+      }
+      .secondary {
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 10px;
+        padding: 13px 18px;
+        min-height: 49px;
+        font-size: 16px;
+      }
+      .clock-bottom {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 17px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .recent {
+        margin-top: 26px;
+      }
+      .empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        padding: 24px 20px 32px;
+        color: #86938b;
+        font-size: 15px;
+      }
+      .empty svg {
+        width: 35px;
+        height: 35px;
+        stroke-width: 1.1;
+        color: #a5b9ab;
+      }
+      .table-row {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 17px 25px;
+        border-top: 1px solid #f0f3f0;
+      }
+      .row-main {
+        flex: 1;
+        font-size: 16px;
+      }
+      .row-main small {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+      .row-price {
+        font-size: 17px;
+        font-weight: 550;
+      }
+      .delete {
+        color: #a07970;
+        padding: 10px;
+        font-size: 14px;
+      }
+      .footnote {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        color: #9aa59f;
+        font-size: 12px;
+        margin-top: 27px;
+      }
+      .footnote svg {
+        width: 14px;
+        height: 14px;
+      }
+      .section-card {
+        padding: 25px;
+        margin-bottom: 23px;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .field label {
+        display: block;
+        font-size: 16px;
+        margin-bottom: 9px;
+      }
+      .field input,
+      .field select {
+        width: 100%;
+        border: 1px solid #dce4df;
+        border-radius: 10px;
+        padding: 14px;
+        color: var(--ink);
+        background: #fafcfb;
+        min-height: 52px;
+      }
+      .field.full {
+        grid-column: 1/-1;
+      }
+      .subheading {
+        margin-bottom: 23px;
+      }
+      .tabs {
+        display: flex;
+        gap: 8px;
+        background: #e9eeeb;
+        border-radius: 12px;
+        padding: 5px;
+        margin-bottom: 23px;
+      }
+      .tabs button {
+        flex: 1;
+        padding: 11px;
+        border-radius: 9px;
+        font-size: 17px;
+      }
+      .tabs .selected {
+        background: white;
+        box-shadow: 0 2px 4px #00000008;
+        color: var(--green);
+      }
+      .month-data {
+        margin-top: 20px;
+        overflow: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        white-space: nowrap;
+        font-size: 16px;
+      }
+      th,
+      td {
+        text-align: right;
+        padding: 17px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+      th {
+        font-weight: 500;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      th:first-child,
+      td:first-child {
+        text-align: left;
+      }
+      .notice {
+        background: #eff5f1;
+        color: #60806b;
+        font-size: 14px;
+        line-height: 1.8;
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 22px;
+      }
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: #102b2660;
+        z-index: 90;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        backdrop-filter: blur(4px);
+      }
+      .modal {
+        background: white;
+        border-radius: 23px;
+        width: 540px;
+        max-height: 90vh;
+        overflow: auto;
+        padding: 27px;
+      }
+      .modal-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+      .close {
+        background: #f1f3f1;
+        border-radius: 50%;
+        height: 36px;
+        width: 36px;
+        font-size: 23px;
+      }
+      .modal-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 25px;
+      }
+      .modal-actions button {
+        flex: 1;
+      }
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        left: calc(50% + 123px);
+        transform: translateX(-50%);
+        background: #203c32;
+        color: white;
+        padding: 15px 23px;
+        border-radius: 12px;
+        box-shadow: 0 5px 30px #0002;
+        z-index: 120;
+        font-size: 16px;
+      }
+      .mobile-logo {
+        display: none;
+      }
+      .split-summary {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+      .mini-stat {
+        padding: 20px;
+        background: #f5f8f5;
+        border-radius: 12px;
+      }
+      .mini-stat small {
+        display: block;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 12px;
+      }
+      .mini-stat b {
+        font-size: 27px;
+      }
+      .button-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+      @media (min-width: 1500px) {
+        main {
+          margin-right: auto;
+        }
+      }
+      @media (max-width: 1150px) {
+        .sidebar {
+          width: 206px;
+          padding: 32px 14px;
+        }
+        main {
+          margin-left: 206px;
+          padding: 0 27px 35px;
+        }
+        .grid {
+          grid-template-columns: 1.2fr 1fr;
+          gap: 18px;
+        }
+        .amount {
+          width: 135px;
+        }
+        .pay-name small {
+          display: none;
+        }
+        .stat {
+          padding: 21px;
+        }
+        .stat-value {
+          font-size: 29px;
+        }
+        .brand {
+          margin-left: 6px;
+        }
+        .brand b {
+          font-size: 21px;
+        }
+        .toast {
+          left: calc(50% + 103px);
+        }
+      }
+      @media (max-width: 850px) {
+        .sidebar {
+          width: 85px;
+          padding: 27px 10px;
+        }
+        .brand {
+          margin: 0 auto 36px;
+        }
+        .brand > div:last-child,
+        .nav-label,
+        .nav-item span,
+        .side-bottom,
+        .brand small {
+          display: none;
+        }
+        .nav-item {
+          justify-content: center;
+          padding: 18px 0;
+        }
+        .brand-icon {
+          width: 44px;
+          height: 44px;
+        }
+        main {
+          margin-left: 85px;
+          padding: 0 23px 35px;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .stack {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          align-items: start;
+        }
+        .stat {
+          padding: 18px;
+        }
+        .stat-value {
+          font-size: 27px;
+        }
+        .currency {
+          font-size: 15px;
+        }
+        .stat-foot {
+          font-size: 11px;
+        }
+        .toast {
+          left: calc(50% + 42px);
+        }
+      }
+      @media (max-width: 600px) {
+        body {
+          font-size: 18px;
+        }
+        .sidebar {
+          inset: auto 0 0;
+          width: 100%;
+          height: 80px;
+          padding: 6px 8px max(6px, env(safe-area-inset-bottom));
+          border-top: 1px solid var(--line);
+          border-right: 0;
+          flex-direction: row;
+          box-shadow: 0 -3px 20px #00000003;
+        }
+        .sidebar .brand,
+        .nav-label,
+        .side-bottom {
+          display: none;
+        }
+        .sidebar nav {
+          display: flex;
+          width: 100%;
+          justify-content: space-around;
+        }
+        .nav-item {
+          flex-direction: column;
+          gap: 5px;
+          margin: 0;
+          padding: 8px 7px;
+          border-radius: 10px;
+          font-size: 12px;
+        }
+        .nav-item span {
+          display: block;
+        }
+        .nav-item svg {
+          width: 23px;
+          height: 23px;
+        }
+        main {
+          margin: 0;
+          padding: 0 17px 103px;
+        }
+        .topbar {
+          height: 70px;
+          margin-bottom: 25px;
+        }
+        .topbrand {
+          font-weight: 650;
+          font-size: 18px;
+          color: var(--ink);
+        }
+        .topright {
+          gap: 10px;
+        }
+        .topright > span {
+          display: none;
+        }
+        .mobile-logo {
+          display: block;
+          color: var(--green);
+        }
+        .heading {
+          align-items: flex-start;
+          flex-wrap: wrap;
+          gap: 16px;
+          margin-bottom: 20px;
+        }
+        h1 {
+          font-size: 28px;
+        }
+        .heading p {
+          font-size: 14px;
+        }
+        .datebox {
+          width: 100%;
+          justify-content: space-between;
+          padding: 4px 8px;
+        }
+        .datebox input {
+          flex: 1;
+          text-align: center;
+          font-size: 18px;
+        }
+        .stats {
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+          margin-bottom: 19px;
+        }
+        .stat {
+          padding: 18px 15px;
+        }
+        .stat.featured {
+          grid-column: 1/-1;
+          order: 3;
+          padding: 19px 20px;
+        }
+        .featured .stat-value {
+          margin: 10px 0;
+          font-size: 34px;
+        }
+        .stat-top {
+          font-size: 15px;
+        }
+        .stat-value {
+          font-size: 26px;
+          margin: 15px 0 9px;
+        }
+        .stat-foot {
+          font-size: 12px;
+        }
+        .stat .currency {
+          font-size: 13px;
+        }
+        .stat.featured .currency {
+          font-size: 18px;
+        }
+        .grid {
+          gap: 19px;
+        }
+        .panel-head {
+          padding: 21px 19px 17px;
+        }
+        .payments {
+          padding: 0 19px;
+        }
+        .payment {
+          padding: 14px 0;
+          gap: 10px;
+        }
+        .pay-name {
+          font-size: 18px;
+        }
+        .amount {
+          width: 141px;
+        }
+        .amount input {
+          font-size: 20px;
+        }
+        .stack {
+          display: flex;
+          gap: 19px;
+        }
+        .quick-actions {
+          padding: 0 19px 20px;
+        }
+        .quick {
+          font-size: 18px;
+          padding: 20px 8px;
+        }
+        .quick small {
+          font-size: 14px;
+        }
+        .card-footer {
+          padding: 14px 19px;
+        }
+        .pay-total {
+          margin: 7px 19px 0;
+        }
+        .recent {
+          margin-top: 20px;
+        }
+        .footnote {
+          font-size: 11px;
+          flex-wrap: wrap;
+        }
+        .toast {
+          left: 50%;
+          bottom: 97px;
+          white-space: nowrap;
+        }
+        .section-card {
+          padding: 20px;
+        }
+        .form-grid {
+          gap: 17px;
+          grid-template-columns: 1fr;
+        }
+        .field.full {
+          grid-column: auto;
+        }
+        .modal {
+          padding: 23px;
+          max-height: 85vh;
+        }
+        .modal .form-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .modal .field.full {
+          grid-column: 1/-1;
+        }
+        .table-row {
+          padding: 16px;
+        }
+        .row-main {
+          font-size: 17px;
+        }
+        .clock-bottom {
+          font-size: 15px;
+        }
+        .clock-content {
+          padding: 0 20px 23px;
+        }
+        .notice {
+          font-size: 15px;
+        }
+      }
+
+      .code.u {
+        background: #e6f2f3;
+        color: #277b85;
+      }
+      .code.e {
+        background: #f5eaf5;
+        color: #925f94;
+      }
+      .pie-layout {
+        display: grid;
+        grid-template-columns: 210px 1fr;
+        gap: 28px;
+        align-items: center;
+        padding: 3px 25px 25px;
+      }
+      .pie {
+        width: 190px;
+        height: 190px;
+        border-radius: 50%;
+        margin: auto;
+        box-shadow: inset 0 0 0 1px #00000004;
+      }
+      .pie-key {
+        display: grid;
+        gap: 12px;
+      }
+      .pie-key-row {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 15px;
+      }
+      .pie-key-row .swatch {
+        width: 11px;
+        height: 11px;
+        border-radius: 4px;
+        flex-shrink: 0;
+      }
+      .pie-key-row .label {
+        flex: 1;
+      }
+      .pie-key-row small {
+        font-size: 13px;
+        color: var(--muted);
+        width: 48px;
+        text-align: right;
+      }
+      .chart-note {
+        font-size: 14px;
+        color: var(--muted);
+        text-align: center;
+        margin-top: 14px;
+      }
+      .chart-card {
+        margin-top: 24px;
+      }
+      .cloud-status {
+        font-size: 15px;
+        color: var(--green);
+        line-height: 1.8;
+        margin: 15px 0;
+      }
+      .field textarea {
+        font: inherit;
+        width: 100%;
+        min-height: 150px;
+        border: 1px solid #dce4df;
+        border-radius: 10px;
+        padding: 14px;
+        background: #fafcfb;
+        font-size: 15px;
+      }
+      .cloud-panel .field {
+        margin-top: 18px;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      @media (max-width: 600px) {
+        .pie-layout {
+          grid-template-columns: 1fr;
+          padding: 5px 20px 25px;
+          gap: 23px;
+        }
+        .pie {
+          width: 200px;
+          height: 200px;
+        }
+        .pie-key-row {
+          font-size: 17px;
+        }
+        .pie-key-row small {
+          font-size: 14px;
+        }
+      }
+      .cloud-button {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        min-height: 46px;
+        min-width: 46px;
+        padding: 10px 14px;
+        background: #eaf4ef;
+        border: 1px solid #deebe2;
+        border-radius: 14px;
+        color: var(--green);
+        font-size: 15px;
+      }
+      .cloud-indicator {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #9ca9a2;
+      }
+      .cloud-button.connected .cloud-indicator {
+        background: #25885e;
+      }
+      .cloud-login-icon {
+        width: 72px;
+        height: 72px;
+        display: grid;
+        place-items: center;
+        background: var(--mint);
+        border-radius: 22px;
+        margin: 0 auto 20px;
+        color: var(--green);
+      }
+      .cloud-login-icon svg {
+        width: 35px;
+        height: 35px;
+      }
+      .google-login {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 13px;
+        background: white;
+        border: 1px solid #d5ded8;
+        border-radius: 12px;
+        min-height: 57px;
+        font-size: 18px;
+        font-weight: 550;
+        margin-top: 25px;
+      }
+      .google-login:disabled {
+        opacity: 0.6;
+        cursor: wait;
+      }
+      .google-mark {
+        font-family: Arial, sans-serif;
+        font-size: 25px;
+        color: #4285f4;
+        font-weight: bold;
+      }
+      .cloud-dialog-copy {
+        text-align: center;
+        font-size: 17px;
+      }
+      .account-email {
+        text-align: center;
+        overflow-wrap: anywhere;
+        color: var(--green);
+        margin: 10px 0;
+        font-size: 16px;
+      }
+      @media (max-width: 600px) {
+        #cloud-button-label {
+          display: none;
+        }
+        .cloud-button {
+          padding: 10px;
+        }
+        .cloud-indicator {
+          position: absolute;
+          right: 7px;
+          top: 7px;
+        }
+        .avatar {
+          width: 44px;
+          height: 44px;
+        }
+      }
+
+      /* 手機版：支出及打卡卡片撐滿容器，覆蓋平板版的 align-items: start。 */
+      @media (max-width: 600px) {
+        .grid > .stack {
+          width: 100%;
+          min-width: 0;
+          align-items: stretch;
+        }
+        .grid > .stack > .card {
+          width: 100%;
+          min-width: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon" data-icon="fish"></div>
+        <div><b>P.W 工時</b><small>返工收工・輕鬆記錄</small></div>
+      </div>
+      <div class="nav-label">工時管理</div>
+      <nav id="nav"></nav>
+      <div class="side-bottom">
+        <button class="nav-item" onclick="navigate('settings')">
+          <i data-icon="settings"></i><span>設定與備份</span>
+        </button>
+        <div class="local-note">
+          <span class="dot"></span>資料儲存於此裝置<br />每日工時，清清楚楚。
+        </div>
+      </div>
+    </aside>
+    <main>
+      <header class="topbar">
+        <div class="topbrand">
+          <i class="mobile-logo" data-icon="fish"></i
+          ><span>P.W · 打卡工資</span>
+        </div>
+        <div class="topright">
+          <button
+            id="cloud-button"
+            class="cloud-button"
+            onclick="showCloudLogin()"
+            aria-label="雲端儲存：使用 Google 登入"
+            title="使用 Google 登入"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 18a5 5 0 1 1 .5-9.9A6 6 0 0 1 19 10a4 4 0 0 1-1 8" />
+              <path d="M12 21V12m-3 3 3-3 3 3" /></svg
+            ><span id="cloud-button-label">登入同步</span
+            ><span class="cloud-indicator" id="cloud-indicator"></span></button
+          ><button
+            class="avatar"
+            onclick="navigate('settings')"
+            aria-label="設定與備份"
+          >
+            店
+          </button>
+        </div>
+      </header>
+      <div id="app"></div>
+      <div class="footnote">
+        <i data-icon="shield"></i
+        >資料預設儲存於本機；按右上角雲端圖示登入同步。<button
+          class="link"
+          onclick="backup()"
+        >
+          匯出備份 ↗
+        </button>
+      </div>
+    </main>
+    <div id="modal-root"></div>
+    <div id="toast-root" aria-live="polite"></div>
+    <script>
+      const icons = {
+        fish: '<path d="M4 12c4-8 12-8 16 0-4 8-12 8-16 0Z"/><path d="m4 12-3-4v8l3-4M13 6l-3-3M13 18l-3 3"/><circle cx="15.5" cy="11" r=".7"/>',
+        home: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
+        wallet:
+          '<path d="M20 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h15V8H5a3 3 0 0 1 0-5"/><path d="M21 12h-6v5h6z"/>',
+        expense:
+          '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z"/><path d="M9 7h6M9 11h6M9 15h3"/>',
+        clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+        chart: '<path d="M4 3v18h17M8 16v-5M13 16V7M18 16V4"/>',
+        settings:
+          '<path d="m9 3-1 3-3 1-2 4 2 2v4l4 3 3-1 3 1 4-3v-4l2-2-2-4-3-1-1-3Z"/><circle cx="12" cy="12" r="3"/>',
+        shield:
+          '<path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z"/><path d="m8 12 3 3 5-6"/>',
+        plus: '<path d="M12 5v14M5 12h14"/>',
+        leaf: '<path d="M20 3C7 2 2 8 6 16s16 3 14-13Z"/><path d="M4 21 15 9"/>',
+        up: '<path d="m5 16 6-6 4 3 6-8M16 5h5v5"/>',
+        bag: '<rect x="4" y="6" width="16" height="15" rx="3"/><path d="M9 7V5a3 3 0 0 1 6 0v2M8 12h8"/>',
+        check: '<path d="m5 12 4 4L19 6"/>',
+      };
+      function icon(n) {
+        return `<svg viewBox="0 0 24 24" aria-hidden="true">${icons[n] || icons.home}</svg>`;
+      }
+      function hydrate() {
+        document
+          .querySelectorAll("[data-icon]")
+          .forEach((e) => (e.innerHTML = icon(e.dataset.icon)));
+      }
+      const KEY = "pw-payroll-v1";
+      let db = {
+        days: {},
+        species: {
+          龜: ["水龜", "陸龜"],
+          蜥蜴: ["豹紋守宮", "睫角守宮", "七彩變色龍"],
+        },
+        rate: 60,
+      };
+      try {
+        let s = JSON.parse(localStorage.getItem(KEY));
+        if (s && s.days && s.species) db = payrollOnly(s);
+      } catch (e) {}
+      // 首次使用同一網域時，只複製舊版的打卡記錄；不更改原本公司資料。
+      if (!localStorage.getItem(KEY)) {
+        try {
+          const legacy = JSON.parse(
+            localStorage.getItem("waterland-ledger-v1"),
+          );
+          if (legacy?.days) {
+            db = payrollOnly(legacy);
+            localStorage.setItem(KEY, JSON.stringify(db));
+          }
+        } catch (e) {}
+      }
+      db.customExpenses ||= [];
+      const hkDate = () =>
+        new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Hong_Kong",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        }).format(new Date());
+      let date = hkDate(),
+        month = date.slice(0, 7),
+        page = "clock",
+        expenseTab = "all";
+      const payments = [
+        ["C", "現金", ""],
+        ["8", "八達通", "o"],
+        ["A", "AlipayHK", "a"],
+        ["V", "Visa", "v"],
+        ["M", "Mastercard", "m"],
+        ["W", "WeChat Pay", "w"],
+        ["U", "銀聯", "u"],
+        ["E", "EPS", "e"],
+      ];
+      const categories = [
+        "魚缸",
+        "濾水泵",
+        "魚糧",
+        "魚藥",
+        "木石珊瑚",
+        "燈飾",
+        "爬缸",
+        "爬蟲用品",
+        "雜項/日常支出",
+      ];
+      // 工資版資料隔離：匯入舊備份或雲端資料時，只保留打卡及時薪。
+      function payrollOnly(source) {
+        const result = {
+          app: "pw-payroll",
+          days: {},
+          rate: Number.isFinite(source.rate) ? source.rate : 60,
+          species: {
+            龜: ["水龜", "陸龜"],
+            蜥蜴: ["豹紋守宮", "睫角守宮", "七彩變色龍"],
+          },
+          customExpenses: [],
+        };
+        for (const [dt, d] of Object.entries(source.days || {})) {
+          if (d.clock?.start || d.clock?.end)
+            result.days[dt] = { sales: {}, items: [], clock: { ...d.clock } };
+        }
+        return result;
+      }
+      function day(d = date) {
+        return db.days[d] || (db.days[d] = { sales: {}, items: [], clock: {} });
+      }
+      function money(n) {
+        return Number(n || 0).toLocaleString("en-HK", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      }
+      function esc(s) {
+        return String(s ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      }
+      function save() {
+        try {
+          localStorage.setItem(KEY, JSON.stringify(db));
+          queueCloud();
+          return true;
+        } catch (e) {
+          toast("儲存失敗：請檢查瀏覽器儲存空間");
+          return false;
+        }
+      }
+      function toast(t) {
+        document.getElementById("toast-root").innerHTML =
+          `<div class="toast">${esc(t)}</div>`;
+        clearTimeout(window.toastTimer);
+        window.toastTimer = setTimeout(
+          () => (document.getElementById("toast-root").innerHTML = ""),
+          3200,
+        );
+      }
+      function hours(d) {
+        let c = d.clock;
+        if (!c.start || !c.end) return 0;
+        const min = (s) =>
+          s.split(":").reduce((a, v, i) => a + Number(v) * (i ? 1 : 60), 0);
+        let n = min(c.end) - min(c.start);
+        if (n < 0) n += 1440;
+        return n / 60;
+      }
+      function wage(d) {
+        return hours(d) * (d.clock.rate ?? db.rate);
+      }
+      function navigate(p) {
+        page = p;
+        render();
+        window.scrollTo(0, 0);
+      }
+      function datePicker() {
+        return `<div class="datebox"><button onclick="shiftDate(-1)" aria-label="上一日">‹</button><input aria-label="記帳日期" type="date" value="${date}" onchange="if(this.value){date=this.value;render()}"><button onclick="shiftDate(1)" aria-label="下一日">›</button></div>`;
+      }
+      function shiftDate(n) {
+        let d = new Date(date + "T12:00:00Z");
+        d.setUTCDate(d.getUTCDate() + n);
+        date = d.toISOString().slice(0, 10);
+        render();
+      }
+      function heading(title, sub, picker = true) {
+        return `<div class="heading"><div><h1>${title}</h1><p>${sub}</p></div>${picker ? datePicker() : ""}</div>`;
+      }
+      function clockCard() {
+        let d = day(),
+          c = d.clock;
+        return `<section class="card"><div class="panel-head"><div class="panel-title">${icon("clock")}<h2>返工打卡</h2></div><button class="link" onclick="clockModal()">手動修改 ↗</button></div><div class="clock-content"><div class="time-row"><div class="time-cell"><small>上班時間</small><b>${c.start || "--:--"}</b></div><div class="time-cell"><small>下班時間</small><b>${c.end || "--:--"}</b></div></div><button class="primary wide" onclick="punch()">${icon(c.end ? "check" : "clock")}${c.end ? "已完成打卡・查看記錄" : c.start ? "收工了，下班打卡" : "開始工作，上班打卡"}</button><div class="clock-bottom"><span>工時 <b>${hours(d).toFixed(2)}</b> 小時</span><span>工資 <b>$${money(wage(d))}</b></span></div></div></section>`;
+      }
+      function render() {
+        document.getElementById("nav").innerHTML = [
+          ["clock", "clock", "每日打卡"],
+          ["monthly", "chart", "每月工資"],
+          ["settings", "settings", "設定備份"],
+        ]
+          .map(
+            ([p, i, t]) =>
+              `<button class="nav-item ${page === p ? "active" : ""}" onclick="navigate('${p}')">${icon(i)}<span>${t}</span></button>`,
+          )
+          .join("");
+        let html = "";
+        if (page === "clock")
+          html =
+            heading("打卡與工資", "返工、收工，一按就記低。") +
+            `<div class="grid">${clockCard()}<section class="card section-card"><h2 class="subheading">時薪設定</h2><div class="field"><label for="rate">每小時工資（HK$）</label><input id="rate" type="number" min="0" step="0.01" value="${db.rate}" inputmode="decimal"></div><button class="primary" style="margin-top:18px" onclick="setRate()">儲存時薪</button><p style="margin-top:15px">新時薪套用至之後的打卡。已記錄的工資不會改動。</p></section></div><div class="notice" style="margin-top:23px">下班時間早於上班時間，會按翌日收工計算。</div>` +
+            clockMonth();
+        if (page === "monthly")
+          html =
+            heading("每月工時與工資", "選擇月份，查看工時及工資總數。", false) +
+            clockMonth();
+        if (page === "settings")
+          html =
+            heading("設定與備份", "照顧好資料，記帳更安心。", false) +
+            `<section class="card section-card"><h2 class="subheading">工資資料備份</h2><p style="margin-bottom:18px">可匯入舊版備份，只會提取打卡及時薪，不會匯入公司收支。</p><div class="notice">未登入時，資料只儲存於目前瀏覽器。按右上角雲端圖示，以 Google 登入後可同步至雲端。建議定期匯出備份。</div><div class="button-row"><button class="primary" onclick="backup()">匯出全部備份</button><button class="secondary" onclick="document.getElementById('import').click()">匯入備份</button><input hidden id="import" type="file" accept="application/json,.json" onchange="restore(this)"></div></section>`;
+        document.getElementById("app").innerHTML = html;
+        hydrate();
+      }
+      function openModal(title, body, submit) {
+        document.getElementById("modal-root").innerHTML =
+          `<div class="modal-overlay" onclick="if(event.target===this)closeModal()"><section class="modal" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="modal-head"><h2>${esc(title)}</h2><button class="close" onclick="closeModal()" aria-label="關閉">×</button></div><form id="modal-form">${body}<div class="modal-actions"><button type="button" class="secondary" onclick="closeModal()">取消</button><button type="submit" class="primary">儲存記錄</button></div></form></section></div>`;
+        document.getElementById("modal-form").onsubmit = (e) => {
+          e.preventDefault();
+          submit(new FormData(e.target));
+        };
+        document.body.style.overflow = "hidden";
+        setTimeout(
+          () => document.querySelector(".modal input,.modal select")?.focus(),
+          50,
+        );
+      }
+      function closeModal() {
+        document.getElementById("modal-root").innerHTML = "";
+        document.body.style.overflow = "";
+      }
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeModal();
+        if (e.key === "Tab" && document.querySelector(".modal")) {
+          let els = [
+            ...document
+              .querySelector(".modal")
+              .querySelectorAll("button,input,select"),
+          ].filter((e) => e.offsetParent !== null);
+          if (e.shiftKey && document.activeElement === els[0]) {
+            e.preventDefault();
+            els.at(-1).focus();
+          } else if (!e.shiftKey && document.activeElement === els.at(-1)) {
+            e.preventDefault();
+            els[0].focus();
+          }
+        }
+      });
+      function punch() {
+        if (day().clock.end || date !== hkDate()) {
+          clockModal();
+          return;
+        }
+        let t = new Intl.DateTimeFormat("en-GB", {
+          timeZone: "Asia/Hong_Kong",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        }).format(new Date());
+        let c = day().clock;
+        if (!c.start) {
+          c.start = t;
+          c.rate = db.rate;
+        } else c.end = t;
+        save();
+        render();
+        toast(c.end ? "已記錄下班時間" : "已記錄上班時間");
+      }
+      function clockModal() {
+        let c = day().clock;
+        openModal(
+          "手動記錄打卡",
+          `<p style="margin-bottom:20px">${date} · 香港時間</p><div class="form-grid"><div class="field"><label>上班時間</label><input type="time" name="start" value="${c.start || ""}" required></div><div class="field"><label>下班時間（可留空）</label><input type="time" name="end" value="${c.end || ""}"></div><div class="field full"><label>當日時薪（HK$）</label><input name="rate" type="number" min="0" step="0.01" required value="${c.rate ?? db.rate}"></div></div><p style="margin-top:15px">下班時間早於上班時間，會按翌日計算。</p>`,
+          (f) => {
+            day().clock = {
+              start: f.get("start"),
+              end: f.get("end"),
+              rate: Number(f.get("rate")),
+            };
+            save();
+            closeModal();
+            render();
+            toast("已更新打卡記錄");
+          },
+        );
+      }
+      function setRate() {
+        let v = document.getElementById("rate");
+        if (!v.value || !v.checkValidity()) return v.reportValidity();
+        db.rate = Number(v.value);
+        save();
+        render();
+        toast("已儲存新時薪");
+      }
+      function monthDays() {
+        return Object.entries(db.days)
+          .filter(([d]) => d.startsWith(month))
+          .sort(([a], [b]) => b.localeCompare(a));
+      }
+      function monthPicker() {
+        return `<div class="datebox"><input style="width:200px" type="month" aria-label="選擇月份" value="${month}" onchange="if(this.value){month=this.value;render()}"></div>`;
+      }
+      function clockMonth() {
+        let ds = monthDays(),
+          h = ds.reduce((a, [_, d]) => a + hours(d), 0),
+          w = ds.reduce((a, [_, d]) => a + wage(d), 0);
+        return `<section class="card section-card"><div class="heading"><h2>每月工時與工資</h2>${monthPicker()}</div><div class="split-summary"><div class="mini-stat"><small>總工時</small><b>${h.toFixed(2)}</b> 小時</div><div class="mini-stat"><small>總工資（HK$）</small><b>${money(w)}</b></div></div><div class="month-data"><table><thead><tr><th>日期</th><th>上班</th><th>下班</th><th>工時</th><th>工資</th></tr></thead><tbody>${
+          ds
+            .filter(([_, d]) => d.clock.start)
+            .map(
+              ([dt, d]) =>
+                `<tr><td><button class="link" onclick="date='${dt}';render();clockModal()">${dt.slice(5)} ↗</button></td><td>${d.clock.start}</td><td>${d.clock.end || "未打卡"}</td><td>${hours(d).toFixed(2)}</td><td>$${money(wage(d))}</td></tr>`,
+            )
+            .join("") ||
+          '<tr><td colspan="5" style="text-align:center;color:#87948b">這個月暫時未有打卡記錄</td></tr>'
+        }</tbody></table></div></section>`;
+      }
+      function backup() {
+        const a = document.createElement("a");
+        let url = URL.createObjectURL(
+          new Blob([JSON.stringify(db, null, 2)], { type: "application/json" }),
+        );
+        a.href = url;
+        a.download = `P.W-打卡工資-備份-${hkDate()}.json`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        toast("已匯出備份檔案");
+      }
+      function validBackup(o) {
+        return (
+          !!o &&
+          o.days &&
+          typeof o.days === "object" &&
+          !Array.isArray(o.days) &&
+          Number.isFinite(o.rate) &&
+          o.rate >= 0 &&
+          Object.entries(o.days).every(
+            ([dt, d]) =>
+              /^\d{4}-\d{2}-\d{2}$/.test(dt) &&
+              d &&
+              d.clock &&
+              ["start", "end"].every(
+                (k) =>
+                  !d.clock[k] || /^([01]\d|2[0-3]):[0-5]\d$/.test(d.clock[k]),
+              ) &&
+              (d.clock.rate === undefined ||
+                (Number.isFinite(d.clock.rate) && d.clock.rate >= 0)),
+          )
+        );
+      }
+      async function restore(input) {
+        try {
+          if (!input.files[0]) return;
+          let o = JSON.parse(await input.files[0].text());
+          if (!validBackup(o)) throw Error();
+          if (!confirm("匯入會取代本機全部資料。請先匯出現有備份。確定繼續？"))
+            return;
+          db = payrollOnly(o);
+          save();
+          render();
+          toast("已成功匯入備份");
+        } catch (e) {
+          toast("檔案格式不正確，請選擇有效備份");
+        }
+      } // 初始化於下方執行
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyAPfSjg2kgDsIQlzj6f4QGfuJUFwKCFlyE",
+        authDomain: "pw-store-manage.firebaseapp.com",
+        projectId: "pw-store-manage",
+        storageBucket: "pw-store-manage.firebasestorage.app",
+        messagingSenderId: "1071126315498",
+        appId: "1:1071126315498:web:a6df7d2531e4a57c46b293",
+      };
+      let cloud = null,
+        cloudTimer = null,
+        cloudState = "使用 Google 登入，即可儲存至雲端。",
+        cloudRevision = 0,
+        firebaseServices = null,
+        firebaseLoading = null,
+        loginBusy = false;
+      function setCloudState(message) {
+        cloudState = message;
+        const e = document.getElementById("cloud-status");
+        if (e) e.textContent = message;
+        updateCloudButton();
+      }
+      function updateCloudButton() {
+        const b = document.getElementById("cloud-button");
+        if (!b) return;
+        b.classList.toggle("connected", !!cloud);
+        const label = cloud
+          ? cloudState.includes("失敗")
+            ? "同步失敗"
+            : cloudState.includes("正在") || cloudState.includes("等候")
+              ? "同步中"
+              : "已連接雲端"
+          : "登入同步";
+        document.getElementById("cloud-button-label").textContent = label;
+        b.title = cloudState;
+        b.setAttribute("aria-label", label + "：" + cloudState);
+      }
+      function showCloudLogin() {
+        openModal(
+          cloud ? "雲端帳戶" : "登入雲端",
+          `<div class="cloud-login-icon">${document.querySelector("#cloud-button svg").outerHTML}</div>${cloud ? `<p class="cloud-dialog-copy">已使用 Google 登入</p><p class="account-email">${esc(cloud.auth.currentUser?.email || "")}</p><div id="cloud-status" class="cloud-status" role="status">${esc(cloudState)}</div><button type="button" class="primary wide" onclick="uploadCloud()">立即同步</button><div class="button-row"><button type="button" class="secondary" onclick="downloadCloud()">從雲端還原</button><button type="button" class="secondary" onclick="disconnectCloud()">登出</button></div><p style="margin-top:18px">請避免多部裝置同時修改。切換裝置前，請先確認資料已同步。</p>` : `<p class="cloud-dialog-copy">用 Google 帳戶登入<br>工時與工資，輕鬆同步。</p><button id="google-login" type="button" class="google-login" onclick="signInGoogle()"><span class="google-mark" aria-hidden="true">G</span>使用 Google 登入</button><div id="cloud-status" class="cloud-status" role="status">${esc(cloudState)}</div><p style="font-size:14px;text-align:center">未登入亦可使用，資料會保留於此裝置。</p>`}`,
+          () => closeModal(),
+        );
+        document.querySelector(".modal-actions").remove();
+      }
+      function googleError(e) {
+        const c = e?.code || "";
+        if (
+          c === "auth/popup-closed-by-user" ||
+          c === "auth/cancelled-popup-request"
+        )
+          return "登入已取消，本機資料不受影響。";
+        if (c === "auth/popup-blocked")
+          return "瀏覽器阻擋了登入視窗。請允許彈出視窗，或在獨立分頁開啟網頁後重試。";
+        if (c === "auth/unauthorized-domain")
+          return "此網址尚未獲授權，請管理員將目前網頁的網域加入 Firebase 授權網域。";
+        if (c === "auth/operation-not-allowed")
+          return "Google 登入尚未啟用，請管理員在 Firebase 啟用 Google 登入。";
+        if (c === "permission-denied")
+          return "已登入，但雲端存取被拒。請管理員檢查資料庫安全規則。";
+        if (c === "auth/account-exists-with-different-credential")
+          return "這個電郵已有其他登入方式，請聯絡管理員協助連結帳戶。";
+        return "暫時未能連接雲端，請檢查網絡後再試。本機資料仍然保留。";
+      }
+      async function initGoogleAuth() {
+        if (firebaseLoading) return firebaseLoading;
+        firebaseLoading = (async () => {
+          const [appSDK, authSDK, fireSDK] = await Promise.all([
+            import(
+              "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js"
+            ),
+            import(
+              "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js"
+            ),
+            import(
+              "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js"
+            ),
+          ]);
+          const app = appSDK.initializeApp(firebaseConfig, "pw-payroll-google"),
+            auth = authSDK.getAuth(app);
+          auth.languageCode = "zh-HK";
+          await authSDK.setPersistence(auth, authSDK.browserLocalPersistence);
+          firebaseServices = {
+            auth,
+            authSDK,
+            fireSDK,
+            store: fireSDK.getFirestore(app),
+          };
+          authSDK.onAuthStateChanged(auth, (user) => {
+            if (user)
+              connectGoogleUser(user).catch((e) => {
+                cloud = null;
+                setCloudState(googleError(e));
+              });
+            else {
+              cloud = null;
+              updateCloudButton();
+            }
+          });
+          return firebaseServices;
+        })();
+        try {
+          return await firebaseLoading;
+        } catch (e) {
+          firebaseLoading = null;
+          throw e;
+        }
+      }
+      async function signInGoogle() {
+        if (loginBusy) return;
+        loginBusy = true;
+        const button = document.getElementById("google-login");
+        if (button) {
+          button.disabled = true;
+          button.innerHTML = "正在開啟 Google 登入…";
+        }
+        try {
+          const svc = await initGoogleAuth();
+          if (svc.auth.currentUser) {
+            await connectGoogleUser(svc.auth.currentUser);
+          } else {
+            const provider = new svc.authSDK.GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: "select_account" });
+            await svc.authSDK.signInWithPopup(svc.auth, provider);
+          }
+        } catch (e) {
+          setCloudState(googleError(e));
+        } finally {
+          loginBusy = false;
+          if (button?.isConnected) {
+            button.disabled = false;
+            button.innerHTML =
+              '<span class="google-mark" aria-hidden="true">G</span>使用 Google 登入';
+          }
+        }
+      }
+      async function connectGoogleUser(user) {
+        const svc = firebaseServices;
+        setCloudState("已登入，正在讀取雲端記錄…");
+        const ref = svc.fireSDK.doc(
+            svc.store,
+            "users",
+            user.uid,
+            "ledgers",
+            "payroll",
+          ),
+          snap = await svc.fireSDK.getDoc(ref);
+        if (svc.auth.currentUser?.uid !== user.uid) return;
+        const connection = { ...svc, ref };
+        if (snap.exists()) {
+          const raw = JSON.parse(snap.data().payload);
+          if (!validBackup(raw)) throw Error("invalid");
+          const existing = payrollOnly(raw);
+          if (!validBackup(existing)) throw Error("invalid");
+          existing.customExpenses ||= [];
+          const localHasData =
+            Object.values(db.days).some(
+              (d) =>
+                Object.keys(d.sales).length || d.items.length || d.clock.start,
+            ) ||
+            db.customExpenses.length ||
+            Object.keys(db.species).length > 2 ||
+            db.species["龜"].length > 2 ||
+            db.species["蜥蜴"].length > 3 ||
+            db.rate !== 60;
+          if (localHasData && JSON.stringify(existing) !== JSON.stringify(db)) {
+            setCloudState("已登入，請選擇要保留的記錄。");
+            openModal(
+              "選擇要使用的記錄",
+              `<div class="notice">本機與雲端有不同記錄，請選擇要保留的版本，避免覆蓋資料。兩個版本不會自動合併。</div><button type="button" class="secondary" onclick="backup()">先備份本機記錄</button><div class="field" style="margin-top:20px"><label>要使用哪個版本？</label><select name="mode"><option value="download">使用雲端記錄</option><option value="upload">使用本機記錄，取代雲端</option></select></div>`,
+              async (f) => {
+                if (!confirm("確定以所選記錄取代另一個版本？")) return;
+                cloud = connection;
+                if (f.get("mode") === "download") {
+                  db = existing;
+                  localStorage.setItem(KEY, JSON.stringify(db));
+                  setCloudState("已連接，已還原雲端記錄");
+                } else await uploadCloud();
+                closeModal();
+                render();
+                toast("已連接 Google 帳戶");
+              },
+            );
+            return;
+          }
+          db = existing;
+          localStorage.setItem(KEY, JSON.stringify(db));
+          cloud = connection;
+          setCloudState("已連接，已還原雲端記錄");
+        } else {
+          cloud = connection;
+          await uploadCloud();
+        }
+        render();
+        if (document.getElementById("google-login")) showCloudLogin();
+      }
+      function queueCloud() {
+        cloudRevision++;
+        if (!cloud) return;
+        clearTimeout(cloudTimer);
+        setCloudState("資料已儲存本機，正在等候雲端同步…");
+        cloudTimer = setTimeout(() => uploadCloud(), 900);
+      }
+      async function uploadCloud() {
+        if (!cloud) return;
+        const conn = cloud,
+          revision = cloudRevision;
+        try {
+          setCloudState("正在儲存至雲端…");
+          await conn.fireSDK.setDoc(conn.ref, {
+            payload: JSON.stringify(db),
+            updatedAt: conn.fireSDK.serverTimestamp(),
+          });
+          if (cloud === conn)
+            setCloudState(
+              revision === cloudRevision
+                ? "已儲存至 Firebase 雲端"
+                : "本機有新變更，等候下一次同步…",
+            );
+        } catch (e) {
+          setCloudState(
+            "雲端儲存失敗；本機記錄仍然保留，請檢查網絡或權限後重試。",
+          );
+        }
+      }
+      async function downloadCloud() {
+        if (
+          !cloud ||
+          !confirm("雲端記錄將取代全部本機資料。請先備份，確定繼續？")
+        )
+          return;
+        clearTimeout(cloudTimer);
+        const revision = cloudRevision;
+        try {
+          let snap = await cloud.fireSDK.getDoc(cloud.ref);
+          if (!snap.exists()) return toast("雲端暫時未有記錄");
+          let data = JSON.parse(snap.data().payload);
+          if (!validBackup(data)) throw Error();
+          if (cloudRevision !== revision)
+            return toast("本機資料剛有變更，請重新還原");
+          db = payrollOnly(data);
+          localStorage.setItem(KEY, JSON.stringify(db));
+          setCloudState("已還原雲端記錄");
+          render();
+          toast("已從雲端還原");
+        } catch (e) {
+          toast("未能還原，請檢查網絡及資料庫權限");
+        }
+      }
+      async function disconnectCloud() {
+        clearTimeout(cloudTimer);
+        cloud = null;
+        if (firebaseServices)
+          await firebaseServices.authSDK.signOut(firebaseServices.auth);
+        setCloudState("已登出，資料繼續儲存於本機");
+        showCloudLogin();
+      }
+
+      render();
+      initGoogleAuth().catch((e) => setCloudState(googleError(e)));
+    </script>
+  </body>
+</html>
